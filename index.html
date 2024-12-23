@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>IIJmioギガプラン最適料金プラン提案アプリ</title>
+  <style>
+    /* リセットと全体設定 */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    /* ヘッダー */
+    header {
+      background: linear-gradient(135deg, #536dfe, #3f51b5);
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1.5rem;
+    }
+    header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* メインコンテナ */
+    .container {
+      width: 95%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem 2rem 1rem;
+    }
+
+    /* セクションタイトル */
+    h2, h3 {
+      margin-top: 1.2rem;
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+      color: #3f51b5;
+    }
+
+    /* カード風の枠 */
+    .card {
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card legend {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.5rem;
+      padding: 0 0.5rem;
+    }
+    .card fieldset {
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* フォーム要素 */
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      width: 130px;
+      min-width: 90px;
+      margin-right: 0.5rem;
+      font-size: 0.95rem;
+      color: #555;
+    }
+    .form-group select,
+    .form-group input[type="number"] {
+      flex: 1;
+      min-width: 100px;
+      max-width: 200px;
+      padding: 0.4rem;
+      font-size: 0.95rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    /* ボタン */
+    .btn {
+      display: inline-block;
+      padding: 0.6rem 1.2rem;
+      background-color: #3f51b5;
+      color: #fff;
+      font-size: 1rem;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      margin-top: 0.5rem;
+    }
+    .btn:hover {
+      background-color: #303f9f;
+    }
+
+    /* 結果表示枠 */
+    .result {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 3px;
+    }
+    .result h2 {
+      margin-top: 0;
+      font-size: 1.4rem;
+      color: #333;
+    }
+    .result p {
+      margin: 0.5rem 0;
+      line-height: 1.5;
+    }
+
+    /* テーブル */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 1rem;
+      background-color: #fff;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: center;
+      padding: 0.8rem;
+      border-bottom: 1px solid #eee;
+      font-size: 0.95rem;
+    }
+    thead {
+      background-color: #f2f2f2;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* フッター */
+    footer {
+      background-color: #3f51b5;
+      color: #fff;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    footer p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 768px) {
+      .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .form-group label {
+        margin-bottom: 0.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>IIJmioギガプラン最適料金プラン提案アプリ</h1>
+    <p>あなたの希望するデータ容量とSIM構成から、コストを最小化するプランを提案します。</p>
+  </header>
+
+  <main class="container">
+    <!-- ▼ 最適プランを計算するフォーム ▼ -->
+    <div class="card">
+      <fieldset>
+        <legend>最適プラン入力フォーム</legend>
+        <div class="form-group">
+          <label for="desiredData">希望データ容量(GB)</label>
+          <input type="number" id="desiredData" value="10" min="1" placeholder="例: 10">
+        </div>
+        <hr>
+        <h3>SIMカード構成</h3>
+        <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #666;">
+          音声SIM/データSIM/eSIMを最大3種類まで指定可能。合計料金が最も安いプランを計算する。
+        </p>
+        <div class="form-group">
+          <label>SIM1 種類:</label>
+          <select id="simType1">
+            <option value="">選択しない</option>
+            <option value="音声SIM">音声SIM</option>
+            <option value="データSIM">データSIM</option>
+            <option value="eSIM">eSIM</option>
+          </select>
+          <label>枚数:</label>
+          <input type="number" id="simCount1" value="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>SIM2 種類:</label>
+          <select id="simType2">
+            <option value="">選択しない</option>
+            <option value="音声SIM">音声SIM</option>
+            <option value="データSIM">データSIM</option>
+            <option value="eSIM">eSIM</option>
+          </select>
+          <label>枚数:</label>
+          <input type="number" id="simCount2" value="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>SIM3 種類:</label>
+          <select id="simType3">
+            <option value="">選択しない</option>
+            <option value="音声SIM">音声SIM</option>
+            <option value="データSIM">データSIM</option>
+            <option value="eSIM">eSIM</option>
+          </select>
+          <label>枚数:</label>
+          <input type="number" id="simCount3" value="0" min="0">
+        </div>
+        <button class="btn" onclick="calculatePlan()">最適プランを計算</button>
+      </fieldset>
+    </div>
+
+    <!-- ▼ 最適プランの結果表示欄 ▼ -->
+    <div id="result" class="result"></div>
+
+    <!-- ▼ 任意プランを試すフォーム ▼ -->
+    <div class="card">
+      <fieldset>
+        <legend>任意のプランを試す</legend>
+        <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+          好みのプランを自由に組み合わせて料金を試算できる。
+        </p>
+        <div class="form-group">
+          <label>SIM1 種類:</label>
+          <select id="anySimType1">
+            <option value="">選択しない</option>
+            <option value="音声SIM">音声SIM</option>
+            <option value="データSIM">データSIM</option>
+            <option value="eSIM">eSIM</option>
+          </select>
+          <label>容量(GB):</label>
+          <select id="anySimCap1">
+            <option value="0">選択しない</option>
+            <option value="2">2</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+          <label>枚数:</label>
+          <input type="number" id="anySimCount1" value="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>SIM2 種類:</label>
+          <select id="anySimType2">
+            <option value="">選択しない</option>
+            <option value="音声SIM">音声SIM</option>
+            <option value="データSIM">データSIM</option>
+            <option value="eSIM">eSIM</option>
+          </select>
+          <label>容量(GB):</label>
+          <select id="anySimCap2">
+            <option value="0">選択しない</option>
+            <option value="2">2</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+          <label>枚数:</label>
+          <input type="number" id="anySimCount2" value="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>SIM3 種類:</label>
+          <select id="anySimType3">
+            <option value="">選択しない</option>
+            <option value="音声SIM">音声SIM</option>
+            <option value="データSIM">データSIM</option>
+            <option value="eSIM">eSIM</option>
+          </select>
+          <label>容量(GB):</label>
+          <select id="anySimCap3">
+            <option value="0">選択しない</option>
+            <option value="2">2</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+          <label>枚数:</label>
+          <input type="number" id="anySimCount3" value="0" min="0">
+        </div>
+        <button class="btn" onclick="calculateAnyPlan()">任意プランを計算</button>
+      </fieldset>
+    </div>
+
+    <!-- ▼ 任意プランの結果表示欄 ▼ -->
+    <div id="anyResult" class="result"></div>
+  </main>
+
+  <footer>
+    <p>© 2024 nakamunya</p>
+  </footer>
+
+  <script>
+    // 料金テーブル(GB -> {音声SIM, データSIM, eSIM})
+    const priceTable = {
+      2:  { "音声SIM": 850,  "データSIM": 740,  "eSIM": 440 },
+      5:  { "音声SIM": 990,  "データSIM": 900,  "eSIM": 660 },
+      10: { "音声SIM": 1500, "データSIM": 1400, "eSIM": 1100 },
+      15: { "音声SIM": 1800, "データSIM": 1730, "eSIM": 1430 },
+      20: { "音声SIM": 2000, "データSIM": 1950, "eSIM": 1650 }
+    };
+
+    // 使用可能な容量プラン
+    const capacityOptions = [2, 5, 10, 15, 20];
+
+    /*
+     * 最適プランを計算する関数
+     * 希望容量以上を満たす組み合わせの中で、料金が最小になるプランを探索する。
+     */
+    function calculatePlan() {
+      const desiredData = parseInt(document.getElementById("desiredData").value, 10);
+
+      // SIM構成の取得
+      const simConfigs = [];
+      for (let i = 1; i <= 3; i++) {
+        const type = document.getElementById(`simType${i}`).value;
+        const count = parseInt(document.getElementById(`simCount${i}`).value, 10);
+        if (type !== "" && count > 0) {
+          simConfigs.push({ type, count });
+        }
+      }
+
+      // SIM構成が何も指定されていない場合
+      if (simConfigs.length === 0) {
+        document.getElementById("result").innerHTML = "<p>SIM構成が指定されていない。</p>";
+        return;
+      }
+
+      /*
+       * 1. SIM種類ごとに容量(2/5/10/15/20)を全探索
+       * 2. 合計容量>=希望容量 かつ 料金が最小のものを特定
+       */
+      const allCapComb = cartesianProduct(
+        ...simConfigs.map(() => capacityOptions)
+      );
+
+      let bestCost = Infinity;
+      let bestPlan = null;
+
+      for (let capComb of allCapComb) {
+        let totalData = 0;
+        let totalCost = 0;
+        let detail = [];
+
+        for (let i = 0; i < simConfigs.length; i++) {
+          const simType = simConfigs[i].type;
+          const simCount = simConfigs[i].count;
+          const simCapacity = capComb[i];
+
+          totalData += simCapacity * simCount;
+          totalCost += priceTable[simCapacity][simType] * simCount;
+
+          detail.push({
+            type: simType,
+            capacity: simCapacity,
+            count: simCount,
+            unitPrice: priceTable[simCapacity][simType],
+            subTotal: priceTable[simCapacity][simType] * simCount
+          });
+        }
+
+        if (totalData >= desiredData && totalCost < bestCost) {
+          bestCost = totalCost;
+          bestPlan = { totalData, totalCost, detail };
+        }
+      }
+
+      if (bestPlan === null) {
+        document.getElementById("result").innerHTML = "<p>指定のデータ容量を満たすプランが見つからない。</p>";
+        return;
+      }
+
+      // 結果の表示
+      let resultHtml = "<h2>最適プラン</h2>";
+      resultHtml += `<p>合計データ容量: ${bestPlan.totalData}GB<br>`;
+      resultHtml += `合計料金: ${bestPlan.totalCost}円</p>`;
+
+      resultHtml += "<table><thead><tr><th>SIM種類</th><th>データ容量(GB)</th><th>枚数</th><th>単価(円)</th><th>小計(円)</th></tr></thead><tbody>";
+      bestPlan.detail.forEach(d => {
+        resultHtml += `<tr>
+          <td>${d.type}</td>
+          <td>${d.capacity}</td>
+          <td>${d.count}</td>
+          <td>${d.unitPrice}</td>
+          <td>${d.subTotal}</td>
+        </tr>`;
+      });
+      resultHtml += "</tbody></table>";
+
+      document.getElementById("result").innerHTML = resultHtml;
+    }
+
+    /*
+     * 任意のプランを試す関数
+     * ユーザーが入力したSIM種類・容量・枚数から合計料金を算出する。
+     */
+    function calculateAnyPlan() {
+      // 入力されたSIMの配列を生成
+      let anySimConfigs = [];
+      for (let i = 1; i <= 3; i++) {
+        const type = document.getElementById(`anySimType${i}`).value;
+        const cap = parseInt(document.getElementById(`anySimCap${i}`).value, 10);
+        const count = parseInt(document.getElementById(`anySimCount${i}`).value, 10);
+
+        if (type !== "" && cap > 0 && count > 0) {
+          anySimConfigs.push({ type, capacity: cap, count });
+        }
+      }
+
+      // 入力値が正しくない場合
+      if (anySimConfigs.length === 0) {
+        document.getElementById("anyResult").innerHTML = "<p>任意プランが正しく指定されていない。</p>";
+        return;
+      }
+
+      // 合計料金と合計データ容量を計算
+      let totalData = 0;
+      let totalCost = 0;
+      let detail = [];
+
+      for (let config of anySimConfigs) {
+        const simType = config.type;
+        const simCap = config.capacity;
+        const simCount = config.count;
+        const unitPrice = priceTable[simCap][simType];
+
+        totalData += simCap * simCount;
+        totalCost += unitPrice * simCount;
+
+        detail.push({
+          type: simType,
+          capacity: simCap,
+          count: simCount,
+          unitPrice: unitPrice,
+          subTotal: unitPrice * simCount
+        });
+      }
+
+      // 結果表示
+      let html = "<h2>任意プランの計算結果</h2>";
+      html += `<p>合計データ容量: ${totalData}GB<br>`;
+      html += `合計料金: ${totalCost}円</p>`;
+      html += "<table><thead><tr><th>SIM種類</th><th>データ容量(GB)</th><th>枚数</th><th>単価(円)</th><th>小計(円)</th></tr></thead><tbody>";
+      detail.forEach(d => {
+        html += `<tr>
+          <td>${d.type}</td>
+          <td>${d.capacity}</td>
+          <td>${d.count}</td>
+          <td>${d.unitPrice}</td>
+          <td>${d.subTotal}</td>
+        </tr>`;
+      });
+      html += "</tbody></table>";
+
+      document.getElementById("anyResult").innerHTML = html;
+    }
+
+    // 汎用的な直積生成関数（総当たり）
+    function cartesianProduct(...arrays) {
+      return arrays.reduce((acc, curr) => {
+        let result = [];
+        acc.forEach(a => {
+          curr.forEach(b => {
+            result.push([...a, b]);
+          });
+        });
+        return result;
+      }, [[]]);
+    }
+  </script>
+</body>
+</html>
